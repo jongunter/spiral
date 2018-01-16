@@ -41,7 +41,8 @@ function getPotentialTurnPoint(point, direction) {
 }
 
 function isEmpty(allPoints, targetPoint) {
-    for(var point of allPoints) {
+    for(var i = 0; i < allPoints.length; i++) {
+        var point = allPoints[i];
         if(pointsAreEqual(point, targetPoint)){
             return false;
         }

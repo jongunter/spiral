@@ -95,6 +95,20 @@ function shiftPoints(points) {
     })
 }
 
+function fillEmptySpaes(grid) {
+    for(let i = 0; i < grid.length; i++){
+        let row = grid[i];
+        if(row){
+            for(let j = 0; j < row.length; j++) {
+                if(!grid[i][j]){
+                    grid[i][j] = null;
+                }
+            }
+        }
+    }
+    return grid;
+}
+
 function createGrid(points) {
     points = shiftPoints(points)
     var grid = [];
@@ -106,11 +120,17 @@ function createGrid(points) {
         }
         grid[y][x] = index;
     });
+    fillEmptySpaes(grid);
     return grid;
 }
 
 function pad(num) {
-    var PAD_AMOUNT = 2;
+    var PAD_AMOUNT = 3;
+
+    if(num === null){
+        return '   ';
+    }
+
     var strNumber = String(num);
     while(strNumber.length < PAD_AMOUNT){
         strNumber += ' ';
@@ -124,9 +144,11 @@ function padRow(row){
 
 function createString(points) {
     var grid = createGrid(points);
-    return grid.map(function(row){
+    console.log(grid);
+    var rows = grid.map(function(row){
         return padRow(row).join(' ');
     });
+    return rows.join('\n')
 }
 
 function createSpiral(size) {
@@ -147,10 +169,3 @@ function createSpiral(size) {
 
     return createString(points);
 }
-
-function main() {
-    var points = createSpiral(50); 
-    console.log(points);
-}
-
-main();

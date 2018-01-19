@@ -100,7 +100,7 @@ function fillEmptySpaes(grid) {
         let row = grid[i];
         if(row){
             for(let j = 0; j < row.length; j++) {
-                if(!grid[i][j]){
+                if(!grid[i][j] && grid[i][j] !== 0){
                     grid[i][j] = null;
                 }
             }
@@ -158,7 +158,7 @@ function createSpiral(size) {
     var currrentX = 0;
     var currentY = 0;
 
-    for(currentPoint = 1; currentPoint <= size; currentPoint ++) {
+    for(currentPoint = 1; currentPoint < size; currentPoint ++) {
         var point = points[currentPoint];
         if(shouldTurn(points, point, direction)){
             direction = changeDirection(direction);

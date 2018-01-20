@@ -1,5 +1,7 @@
 
 
+
+
 var Direction = {
     Up: 1,
     Right: 2,
@@ -7,165 +9,262 @@ var Direction = {
     Left: 4
 }
 
-function changeDirection(oldDirection) {
-    switch(oldDirection){
-        case Direction.Up:
-        case Direction.Right:
-        case Direction.Down:
-            return oldDirection + 1;
-        case Direction.Left:
-            return Direction.Up;
-        default:
-            throw new Error('bad direction');
+
+
+class Point {
+
+    constructor(x, y){
+        if(isNaN(x)){
+            throw new Error('invalid x');
+        }
+        if(isNaN(y)){
+            throw new Error('invalid y')
+        }
+        this.x = x;
+        this.y = y;
     }
-}
 
-function getNextPoint(point, direction) {
-    var x = point.x;
-    var y = point.y;
-    switch(direction) {
-        case Direction.Up:
-            return {x: x, y: y - 1}
-        case Direction.Right:
-            return {x: x + 1, y: y}
-        case Direction.Down:
-            return {x: x, y: y + 1}
-        case Direction.Left:
-            return {x: x - 1, y: y}
-        default: 
-            throw new Error('bad direction!')
-    }
-}
-
-function getPotentialTurnPoint(point, direction) {
-    var newDirection = changeDirection(direction);
-    return getNextPoint(point, newDirection);
-}
-
-function isEmpty(allPoints, targetPoint) {
-    for(var i = 0; i < allPoints.length; i++) {
-        var point = allPoints[i];
-        if(pointsAreEqual(point, targetPoint)){
+    equals(point) {
+        if(!point){
             return false;
         }
+        return this.x === point.x && this.y === point.y;
     }
-    return true;
-}
 
-function pointsAreEqual(point1, point2) {
-    if(!point1 || !point2){
-        return false;
+    getNext(direction) {
+        switch(direction) {
+            case Direction.Up:
+                return new Point(this.x, this.y - 1);
+            case Direction.Right:
+                return new Point(this.x + 1, this.y);
+            case Direction.Down:
+                return new Point(this.x, this.y + 1);
+            case Direction.Left:
+                return new Point(this.x -1, this.y);
+            default: 
+                throw new Error('bad direction!')
+        }
     }
-    return point1.x === point2.x && point1.y === point2.y;
+
+    get
+
 }
 
-function shouldTurn(points, currentPoint, direction) {
-    var targetPoint = getPotentialTurnPoint(currentPoint, direction);
-    var empty = isEmpty(points, targetPoint);
-    return empty;
-}
+class PointCollection {
 
-function findBiggestAbsValue(points, propertyName) {
-    return points.reduce(function(biggest, point){
-        var current = Math.abs(point[propertyName]);
-        if(current > biggest){
-            return current;
-        } else {
-            return biggest;
+    constructor(points) {
+        if(!points) {
+            points = [];
         }
-    }, 0);
-}
+        return this._points = points;
+    }
 
-function findBiggestX(points) {
-    return findBiggestAbsValue(points, 'x');
-}
+    add(point) {
+        this._points.push(point)
+    }
 
-function findBiggestY(points) {
-    return findBiggestAbsValue(points, 'y');
-}
+    getPointAt(index) {
+        return this_points[index];
+    }
 
-function shiftPoints(points) {
-    var xOffset = findBiggestX(points);
-    var yOffset = findBiggestY(points);
-    return points.map(function(point){
-        return {
-            x: point.x + xOffset,
-            y: point.y + yOffset
+    isEmpty(targetPoint) {
+        for(var i = 0; i < this._points.length; i++) {
+            var point = getPointAt(i);
+            if(point.equals(targetPoint)){
+                return false;
+            }
         }
-    })
+        return true;
+    }
+
+    toNonNegativeCollection(points) {
+        var xOffset = this._getBiggestX(points);
+        var yOffset = this._getBiggestY(points);
+        var nextArray = this.points.map((point) => {
+            return new Point(point.x + xOffset, point.y + yOffset);
+        });
+        return new PointCollection(nextArray);
+    }
+
+    _getBiggestX(points) {
+        return this._getBiggestAbsValue('x');
+    }
+    
+    _getBiggestY(points) {
+        return this._getBiggestAbsValue('y');
+    }
+
+    _getBiggestAbsValue(propertyName) {
+        return this._points.reduce(function(biggest, point){
+            var current = Math.abs(point[propertyName]);
+            if(current > biggest){
+                return current;
+            } else {
+                return biggest;
+            }
+        }, 0);
+    }
+
 }
 
-function fillEmptySpaes(grid) {
-    for(let i = 0; i < grid.length; i++){
-        let row = grid[i];
-        if(row){
-            for(let j = 0; j < row.length; j++) {
-                if(!grid[i][j] && grid[i][j] !== 0){
-                    grid[i][j] = null;
+class Spiral {
+
+    constructor(size) {
+        this._assertValidSize(size)
+        this.size = _convertToWholeNumber(size);
+        this.points = new PointCollection();
+        this.currentDirection = Direction.Right;
+
+        this.points.add(new Point(0, 0));
+        if(size === 0) {
+            return;
+        }
+
+        this.points.add(new Point(1, 0));
+        if(size === 1) {
+            return; 
+        }
+        
+        for(this.currentPoint = 1; this.currentPoint < size; this.currentPoint ++) {
+            var point = this.getCurrentPoint();
+            if(shouldTurn(points, point, direction)){
+                direction = changeDirection(direction);
+            } 
+            var newPoint = getNextPoint(point, direction);
+            points.push(newPoint);
+        }
+
+        return createString(points);
+    }
+
+    getCurrentPoint(){
+        return this.points.getPointAt(this.currentPoint);
+    }
+
+    get2dArray(){
+
+    }
+
+    shouldTurn() {
+        var targetPoint = _getPotentialTurnPoint();
+        var isEmpty = this.points.isEmpty(targetPoint);
+        return isEmpty;
+    }
+
+    getPotentialTurnPoint() {
+        var newDirection = changeDirection(this.currentDirection);
+        return getNextPoint(this.currentPoint, newDirection);
+    }
+
+   changeDirection(oldDirection) {
+        switch(oldDirection){
+            case Direction.Up:
+            case Direction.Right:
+            case Direction.Down:
+                return oldDirection + 1;
+            case Direction.Left:
+                return Direction.Up;
+            default:
+                throw new Error('bad direction');
+        }
+    }
+
+    
+
+    _assertValidSize(size){
+        if(isNaN(size) || size === null){
+            throw new Erorr("Size must be a number")
+        }
+        if(size < 0){
+            throw new Error("Size must be 0 or greater")
+        }
+    }
+
+    _convertToWholeNumber(size) {
+        return parseInt(size);
+    }
+
+    static isSprial(spiral){
+        return spiral instanceof Spiral;
+    }
+
+}
+
+class SpiralStringRenderer {
+
+    constructor(spiral){
+        if(!Spiral.isSprial(spiral)) {
+            throw new Error("invalid spiral");
+        }
+        this.spiral = spirall;
+    }
+
+    render(){
+        var grid = createGrid(points);
+        console.log(grid);
+        var rows = grid.map(function(row){
+            return padRow(row).join(' ');
+        });
+        return rows.join('\n')
+    }
+
+    _fillEmptySpaes(grid) {
+        for(let i = 0; i < grid.length; i++){
+            let row = grid[i];
+            if(row){
+                for(let j = 0; j < row.length; j++) {
+                    if(!grid[i][j] && grid[i][j] !== 0){
+                        grid[i][j] = null;
+                    }
                 }
             }
         }
+        return grid;
     }
-    return grid;
-}
 
-function createGrid(points) {
-    points = shiftPoints(points)
-    var grid = [];
-    points.forEach(function(point, index) {
-        var x = point.x;
-        var y = point.y;
-        if(!grid[y]){
-            grid[y] = []
+    _createGrid(points) {
+        points =  this._shiftPoints(points)
+        var grid = [];
+        points.forEach(function(point, index) {
+            var x = point.x;
+            var y = point.y;
+            if(!grid[y]){
+                grid[y] = []
+            }
+            grid[y][x] = index;
+        });
+        fillEmptySpaes(grid);
+        return grid;
+    }
+
+    _getSprialSize(){
+        return this.spiral.size;
+    }
+
+    _createEmptyBlock(size){
+        let block = '';
+        for(let i = 0; i < size, i++){
+            block += ' ';
         }
-        grid[y][x] = index;
-    });
-    fillEmptySpaes(grid);
-    return grid;
-}
-
-function pad(num) {
-    var PAD_AMOUNT = 3;
-
-    if(num === null){
-        return '   ';
+        return block;
     }
 
-    var strNumber = String(num);
-    while(strNumber.length < PAD_AMOUNT){
-        strNumber += ' ';
-    }
-    return strNumber;
-}
-
-function padRow(row){
-    return row.map(pad);
-}
-
-function createString(points) {
-    var grid = createGrid(points);
-    console.log(grid);
-    var rows = grid.map(function(row){
-        return padRow(row).join(' ');
-    });
-    return rows.join('\n')
-}
-
-function createSpiral(size) {
-
-    var direction = Direction.Right;
-    var points = [{x: 0, y: 0}, {x: 1, y: 0}];
-    var currrentX = 0;
-    var currentY = 0;
-
-    for(currentPoint = 1; currentPoint < size; currentPoint ++) {
-        var point = points[currentPoint];
-        if(shouldTurn(points, point, direction)){
-            direction = changeDirection(direction);
-        } 
-        var newPoint = getNextPoint(point, direction);
-        points.push(newPoint);
+    _padRow(row){
+        return row.map(cell => this._padCell(cell));
     }
 
-    return createString(points);
+    _padCell(cell) {
+        var PAD_AMOUNT = this._getSprialSize();
+    
+        if(cell === null){
+            return _createEmptyBlock(size);
+        }
+    
+        var strNumber = String(cell);
+        while(strNumber.length < PAD_AMOUNT){
+            strNumber += ' ';
+        }
+        return strNumber;
+    }
+
 }

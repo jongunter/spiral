@@ -16,7 +16,7 @@ Generates a sprial of numbers going from 0 to X, starting in the middle with zer
 
 ## Known limitations
 1. Only works on browsers that support ES6. An ES5 transpiled version is coming soon (see enhancements below)
-2. Is not in a module format. Only available Globally on the `Window` object.
+2. Is not in a module format. Only available globally on the `Window` object.
 3. Is not really usable in Node.Js. Only works in the browser.
 
 ## Future enhancements

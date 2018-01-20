@@ -17,13 +17,14 @@ describe("Spiral generator", () => {
 
     })
 
-    
-
-
-
-
-
 })
+
+function createSpiral(size) {
+    const spiral = new Spiral(size);
+    const renderer = new StringRenderer(spiral);
+    const result = renderer.render();
+    return result;
+}
 
 function assertAllNumbersPresent(spiralString, upTo) {
     const numbersFound = spiralString
@@ -31,8 +32,6 @@ function assertAllNumbersPresent(spiralString, upTo) {
         .map(s => s.trim())
         .map(s => parseInt(s))
         .filter(n => !isNaN(n));
-
-    console.log(numbersFound);
 
     for(let i = 0; i <= upTo; i++){
         if(numbersFound.indexOf(i) === -1){
